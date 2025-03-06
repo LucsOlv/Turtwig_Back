@@ -22,17 +22,20 @@ package main
 import (
 	"log"
 
-	"github.com/LucsOlv/Turtwing_Back/internal/app"
 	_ "github.com/LucsOlv/Turtwing_Back/docs"
+	"github.com/LucsOlv/Turtwing_Back/internal/app"
 )
 
 func main() {
-	application, err := app.InitializeApplication()
-	if err != nil {
-		log.Fatal(err)
-	}
+	container := app.BuildContainer()
 
-	if err := application.Start(); err != nil {
-		log.Fatal(err)
+	err := container.Invoke(func(application *app.Application) {
+		if err := application.Start(); err != nil {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	})
+
+	if err != nil {
+		log.Fatalf("Error resolving dependencies: %v", err)
 	}
 }

@@ -57,6 +57,44 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// SignUp godoc
+// @Summary      Cadastrar usuário
+// @Description  Cadastra um novo usuário
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body models.SignUpInput true "Dados do usuário"
+// @Success      200  {object}  types.Response
+// @Failure      400  {object}  types.Response
+// @Failure      401  {object}  types.Response
+// @Router       /auth/signup [post]
+func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
+	var input models.SignUpInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		jsonResponse(w, http.StatusBadRequest, types.Response{
+			Status:  "error",
+			Message: "Invalid request body",
+		})
+		return
+	}
+
+	token, err := h.authService.SignUp(input)
+	if err != nil {
+		jsonResponse(w, http.StatusUnauthorized, types.Response{
+			Status:  "error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	jsonResponse(w, http.StatusOK, types.Response{
+		Status: "success",
+		Data: map[string]string{
+			"token": token,
+		},
+	})
+}
+
 func jsonResponse(w http.ResponseWriter, status int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)

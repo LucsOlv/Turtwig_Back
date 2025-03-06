@@ -7,6 +7,15 @@ definitions:
       password:
         type: string
     type: object
+  models.SignUpInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
   types.Response:
     properties:
       data: {}
@@ -57,6 +66,36 @@ paths:
           schema:
             $ref: '#/definitions/types.Response'
       summary: Autenticar usuário
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Cadastra um novo usuário
+      parameters:
+      - description: Dados do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.Response'
+      summary: Cadastrar usuário
       tags:
       - auth
   /protected:
