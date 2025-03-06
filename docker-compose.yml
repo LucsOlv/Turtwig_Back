@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=turtwig
+      - DB_PORT=5432
+      - JWT_SECRET=your_jwt_secret_here
+    depends_on:
+      - postgres
+    networks:
+      - turtwig-network
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=turtwig
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - turtwig-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  turtwig-network:
+    driver: bridge
